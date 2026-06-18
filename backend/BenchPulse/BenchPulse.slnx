@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BenchPulse.Api/BenchPulse.Api.csproj" />
+  <Project Path="BenchPulse.Application/BenchPulse.Application.csproj" />
+  <Project Path="BenchPulse.Domain/BenchPulse.Domain.csproj" />
+  <Project Path="BenchPulse.Infrastructure/BenchPulse.Infrastructure.csproj" />
+</Solution>
