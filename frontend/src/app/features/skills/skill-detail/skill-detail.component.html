@@ -1,0 +1,22 @@
+<!-- Skill hero header -->
+<div class="card" style="margin-bottom: 2rem">
+  <h1 class="section-title">{{ skill()?.name }}</h1>
+  <p class="section-sub">{{ skill()?.category }}</p>
+  <p>{{ skill()?.description }}</p>
+</div>
+
+<!-- Teachable peers grid -->
+<h2 class="section-title" style="font-size:1.5rem; margin-bottom:1rem">People who can teach this</h2>
+<div class="skills-grid">
+  @for (us of teachable(); track us.id) {
+    <div class="card">
+      <div class="avatar avatar-sm avatar-placeholder">{{ us.userFullName[0] }}</div>
+      <h4 style="margin-top:0.75rem">{{ us.userFullName }}</h4>
+      <span class="badge" [class]="skillStatusClass(us.status)">{{ statusLabel(us.status) }}</span>
+      <a [routerLink]="['/bookings/new']" [queryParams]="{providerId: us.userId, skillId: skill()?.id}"
+         class="btn btn-primary btn-sm" style="margin-top:1rem; width:100%">
+        Book Session
+      </a>
+    </div>
+  }
+</div>

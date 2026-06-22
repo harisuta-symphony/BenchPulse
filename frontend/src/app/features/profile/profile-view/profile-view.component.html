@@ -1,0 +1,52 @@
+<div class="page fade-up">
+  <div class="container" style="max-width: 800px">
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div><span>Loading profile…</span></div>
+    } @else if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    } @else {
+
+      <!-- Profile header card -->
+      <div class="card" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap">
+        @if (user()?.avatarUrl) {
+          <img [src]="user()!.avatarUrl" [alt]="user()!.fullName" class="avatar avatar-lg" />
+        } @else {
+          <div class="avatar avatar-lg avatar-placeholder">{{ initials() }}</div>
+        }
+        <div style="flex: 1; min-width: 0">
+          <h1 style="font-size: 1.75rem; margin-bottom: 0.25rem">{{ user()?.fullName }}</h1>
+          <p style="color: var(--muted); margin-bottom: 0.5rem">{{ user()?.department }}</p>
+          <p>{{ user()?.bio }}</p>
+        </div>
+        <a routerLink="/profile/edit" class="btn btn-secondary">Edit Profile</a>
+      </div>
+
+      <!-- Skills by status -->
+      <h2 class="section-title" style="font-size: 1.25rem; margin-bottom: 1.25rem">My Skills</h2>
+
+      @if (skillGroups().length === 0) {
+        <div class="empty-state">
+          <h3>No skills yet</h3>
+          <p>Edit your profile to add skills you're learning or can teach.</p>
+          <a routerLink="/profile/edit" class="btn btn-primary" style="margin-top: 1rem">Add Skills</a>
+        </div>
+      } @else {
+        @for (group of skillGroups(); track group.label) {
+          <div style="margin-bottom: 1.5rem">
+            <p style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase;
+                      letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.625rem">
+              {{ group.label }}
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+              @for (us of group.skills; track us.id) {
+                <span class="badge" [ngClass]="group.badgeClass">{{ us.skillName }}</span>
+              }
+            </div>
+          </div>
+        }
+      }
+
+    }
+  </div>
+</div>

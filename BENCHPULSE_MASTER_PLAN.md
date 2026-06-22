@@ -1651,7 +1651,7 @@ export class SkillSearchComponent implements OnInit {
 </div>
 ```
 
-**Done when:** Skills load on page open; search filters results in real time.
+**Done when:** Skills load on page open; search filters results in real time; page uses Symphony dark-theme classes from Task 6.11.
 
 ---
 
@@ -1662,9 +1662,35 @@ export class SkillSearchComponent implements OnInit {
 Key logic:
 - Route param `id` → `skillService.getById(id)` + `userSkillService.getBySkillId(id)`
 - Filter `UserSkill[]` where `isTeachable === true`
-- Each result shows user name, status badge, and a "Book Session" button linking to `/bookings/new?providerId=X&skillId=Y`
+- Each result shows user avatar (or gradient placeholder), name, status badge, and a "Book Session" button linking to `/bookings/new?providerId=X&skillId=Y`
 
-**Done when:** Navigating to `/skills/:id` shows the skill and its teachable users.
+**UI structure:**
+```html
+<!-- Skill hero header -->
+<div class="card" style="margin-bottom: 2rem">
+  <h1 class="section-title">{{ skill()?.name }}</h1>
+  <p class="section-sub">{{ skill()?.category }}</p>
+  <p>{{ skill()?.description }}</p>
+</div>
+
+<!-- Teachable peers grid -->
+<h2 class="section-title" style="font-size:1.5rem; margin-bottom:1rem">People who can teach this</h2>
+<div class="skills-grid">
+  @for (us of teachable(); track us.id) {
+    <div class="card">
+      <div class="avatar avatar-sm avatar-placeholder">{{ us.userFullName[0] }}</div>
+      <h4 style="margin-top:0.75rem">{{ us.userFullName }}</h4>
+      <span class="badge" [class]="skillStatusClass(us.status)">{{ statusLabel(us.status) }}</span>
+      <a [routerLink]="['/bookings/new']" [queryParams]="{providerId: us.userId, skillId: skill()?.id}"
+         class="btn btn-primary btn-sm" style="margin-top:1rem; width:100%">
+        Book Session
+      </a>
+    </div>
+  }
+</div>
+```
+
+**Done when:** Navigating to `/skills/:id` shows the skill hero card and a grid of teachable peers with correct status badges and Book CTA.
 
 ---
 
@@ -1679,7 +1705,37 @@ Key logic:
 - Show skill badges grouped by status (Learning / Proficient / Expert)
 - "Edit Profile" button → `/profile/edit`
 
-**Done when:** Profile page renders user info and skills correctly.
+**UI structure:**
+```html
+<div class="page fade-up">
+  <div class="container" style="max-width:800px">
+    <!-- Profile header card -->
+    <div class="card" style="display:flex; align-items:center; gap:1.5rem; margin-bottom:2rem">
+      <div class="avatar avatar-lg avatar-placeholder">{{ user()?.fullName?.[0] }}</div>
+      <div style="flex:1">
+        <h1 style="font-size:1.75rem">{{ user()?.fullName }}</h1>
+        <p style="color:var(--muted)">{{ user()?.department }}</p>
+        <p style="margin-top:0.5rem">{{ user()?.bio }}</p>
+      </div>
+      <a routerLink="/profile/edit" class="btn btn-secondary">Edit Profile</a>
+    </div>
+
+    <!-- Skills by status -->
+    @for (group of skillGroups(); track group.label) {
+      <h3 style="margin-bottom:0.75rem; color:var(--muted); font-size:0.875rem; text-transform:uppercase; letter-spacing:0.05em">
+        {{ group.label }}
+      </h3>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem">
+        @for (us of group.skills; track us.id) {
+          <span class="badge" [class]="skillStatusClass(us.status)">{{ us.skillName }}</span>
+        }
+      </div>
+    }
+  </div>
+</div>
+```
+
+**Done when:** Profile page renders user info card and skill badges grouped by status (Learning / Proficient / Expert).
 
 ---
 
@@ -1693,7 +1749,39 @@ Key logic:
 - Add/remove skills via search-and-select
 - `PUT /api/users/:id` on save
 
-**Done when:** Editing and saving reflects changes on profile view page.
+**UI structure:** Wrap all fields in `<div class="card">` sections. Use `.form-group`, `.form-label`, `.form-input`, `.form-textarea` from `styles.css`. Save/Cancel buttons use `.btn-primary` and `.btn-secondary`.
+
+```html
+<div class="page fade-up">
+  <div class="container" style="max-width:640px">
+    <h1 class="section-title" style="margin-bottom:2rem">Edit Profile</h1>
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" formControlName="fullName" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <input class="form-input" formControlName="department" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bio</label>
+          <textarea class="form-textarea" formControlName="bio"></textarea>
+        </div>
+        <div style="display:flex; gap:0.75rem; justify-content:flex-end; margin-top:0.5rem">
+          <a routerLink="/profile" class="btn btn-secondary">Cancel</a>
+          <button class="btn btn-primary" type="submit" [disabled]="saving()">
+            @if (saving()) { Saving… } @else { Save Changes }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+**Done when:** Editing and saving reflects changes on profile view page; form uses the Symphony dark-theme inputs.
 
 ---
 
@@ -1710,7 +1798,9 @@ Key logic:
 - Optional message field
 - `POST /api/bookings` on submit
 
-**Done when:** Submitting form creates a booking and redirects to `/bookings`.
+**UI structure:** Single `.card` wrapping a form. Provider and skill shown as read-only info row at top. Duration rendered as a button-group (four `<button class="btn btn-secondary">` that gain `btn-primary` on selection). Submit uses `.btn-primary btn-lg`.
+
+**Done when:** Submitting form creates a booking and redirects to `/bookings`; form is visually consistent with the Symphony theme.
 
 ---
 
@@ -1723,7 +1813,41 @@ Key logic:
 - Status badges (Pending / Confirmed / Cancelled / Completed)
 - Provider tab: "Confirm" / "Cancel" action buttons → `PATCH /api/bookings/:id/status`
 
-**Done when:** Bookings list shows correctly; status changes update immediately.
+**UI structure:**
+```html
+<div class="page fade-up">
+  <div class="container">
+    <h1 class="section-title">My Bookings</h1>
+
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab() === 'sent'"     (click)="activeTab.set('sent')">My Requests</button>
+      <button class="tab" [class.active]="activeTab() === 'incoming'" (click)="activeTab.set('incoming')">Incoming</button>
+    </div>
+
+    @for (b of displayedBookings(); track b.id) {
+      <div class="card" style="margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center">
+        <div>
+          <h4>{{ b.skillName }}</h4>
+          <p style="color:var(--muted); font-size:0.875rem">
+            with {{ activeTab() === 'sent' ? b.providerName : b.requesterName }}
+            · {{ b.scheduledAt | date:'MMM d, y, h:mm a' }}
+            · {{ b.durationMinutes }} min
+          </p>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.75rem">
+          <span class="badge" [class]="bookingStatusClass(b.status)">{{ bookingStatusLabel(b.status) }}</span>
+          @if (activeTab() === 'incoming' && b.status === BookingStatus.Pending) {
+            <button class="btn btn-primary btn-sm" (click)="confirm(b.id)">Confirm</button>
+            <button class="btn btn-danger btn-sm"  (click)="cancel(b.id)">Cancel</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
+```
+
+**Done when:** Bookings list shows correctly with tab switching; status badges use correct Symphony colors; status changes update the UI immediately.
 
 ---
 
@@ -1883,27 +2007,596 @@ Add `AuthGuard` to all protected routes — redirect to `/login` if no session.
 
 ### Task 6.10 — Add loading states and error handling
 
-**Goal:** Every async operation shows a spinner and surfaces errors gracefully.
+**Goal:** Every async operation shows a spinner and surfaces errors gracefully, using the Symphony dark-theme classes defined in Task 6.11.
 
-- Create a shared `LoadingSpinnerComponent` (standalone).
-- Create a shared `ErrorAlertComponent` for API errors.
-- Use Angular Signals for loading/error state in every feature component.
+- Create a shared `LoadingSpinnerComponent` (standalone) — renders `<div class="loading-overlay"><div class="spinner"></div></div>`.
+- Create a shared `ErrorAlertComponent` for API errors — renders `<div class="alert alert-error">{{ message }}</div>` with a dismiss `×` button.
+- Use Angular Signals for `loading = signal(false)` and `error = signal<string|null>(null)` in every feature component.
 
-**Done when:** Network tab shows requests; spinner appears during loads; errors show a dismissible alert.
+**Done when:** Network tab shows requests; `.spinner` animation appears during loads; `.alert-error` shows a dismissible error; both components are standalone and reusable.
 
 ---
 
-### Task 6.11 — Style the app (minimal)
+### Task 6.11 — Style the app (Symphony.is design system)
 
-**Goal:** A clean, usable UI — not a design masterpiece, just functional.
+**Goal:** A premium, dark-mode UI that matches Symphony.is's visual identity — Poppins font, deep charcoal backgrounds, indigo/violet primary, glassmorphic cards, and smooth micro-interactions throughout.
 
-Apply basic styles to:
-- `styles.css` — CSS variables for colors, font-family, button styles
-- Skill cards with hover state
-- Status badge colors (Learning=blue, Proficient=green, Expert=gold)
-- Responsive grid layout for skills
+---
 
-**Done when:** App looks presentable at 1280px and 375px (mobile).
+#### Design Token Reference (derived from symphony.is)
+
+| Token | Value | Usage |
+|---|---|---|
+| `--background` | `#14161A` | Page background |
+| `--surface` | `#1B1D23` | Card/panel surface |
+| `--surface-glass` | `rgba(27,29,35,0.5)` | Glassmorphic card bg |
+| `--border` | `hsl(220,13%,18%)` | Borders, dividers |
+| `--foreground` | `#FAFAFA` | Primary text |
+| `--muted` | `hsl(0,0%,85%)` | Secondary text |
+| `--primary` | `#726BFF` | CTA buttons, links, focus rings |
+| `--primary-glow` | `rgba(114,107,255,0.25)` | Button/card glow on hover |
+| `--secondary` | `#33CCFF` | Highlights, Learning badge |
+| `--accent` | `#CC33FF` | Expert badge, accent gradients |
+| `--coral` | `#FF7A4D` | Warnings, Pending badge |
+| `--success` | `#22C55E` | Confirmed badge, Proficient badge |
+| `--danger` | `#EF4444` | Cancelled, error states |
+| `--radius` | `0.75rem` | Default border radius |
+| `--radius-lg` | `1.25rem` | Cards, panels |
+| Font | `Poppins` | All text — import from Google Fonts |
+
+---
+
+#### Step 1 — Global `styles.css`
+
+**File:** `frontend/src/styles.css`
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── Tokens ─────────────────────────────────────────────── */
+:root {
+  --background:    #14161A;
+  --surface:       #1B1D23;
+  --surface-glass: rgba(27, 29, 35, 0.5);
+  --border:        hsl(220, 13%, 18%);
+  --foreground:    #FAFAFA;
+  --muted:         hsl(0, 0%, 85%);
+
+  --primary:       #726BFF;
+  --primary-dark:  #5A52E0;
+  --primary-glow:  rgba(114, 107, 255, 0.25);
+  --secondary:     #33CCFF;
+  --accent:        #CC33FF;
+  --coral:         #FF7A4D;
+  --success:       #22C55E;
+  --danger:        #EF4444;
+
+  --radius:        0.75rem;
+  --radius-lg:     1.25rem;
+
+  --transition:    150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-card:   0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow:   0 0 20px var(--primary-glow);
+}
+
+/* ─── Reset & Base ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Poppins', -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.75rem); font-weight: 800; line-height: 1.1; }
+h2 { font-size: clamp(1.5rem, 3vw, 3rem);  font-weight: 500; line-height: 1.2; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+h4 { font-size: 1rem;    font-weight: 600; }
+
+a { color: var(--primary); text-decoration: none; transition: color var(--transition); }
+a:hover { color: #9A95FF; }
+
+img { max-width: 100%; display: block; }
+
+/* ─── Layout ─────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.page {
+  min-height: calc(100vh - 64px);
+  padding: 2rem 0 4rem;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 0 0 var(--primary-glow);
+}
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+}
+.btn-ghost:hover { color: var(--foreground); background: var(--surface); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+.btn-danger:hover { background: #DC2626; }
+
+.btn-sm { padding: 0.375rem 0.875rem; font-size: 0.8125rem; }
+.btn-lg { padding: 0.875rem 2rem; font-size: 1.0625rem; }
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ─── Cards ──────────────────────────────────────────────── */
+.card {
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.card:hover {
+  border-color: rgba(114, 107, 255, 0.4);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+/* ─── Inputs & Forms ─────────────────────────────────────── */
+.form-group { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 1.25rem; }
+
+.form-label { font-size: 0.875rem; font-weight: 500; color: var(--muted); }
+
+.form-input,
+.form-select,
+.form-textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.625rem 0.875rem;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+  outline: none;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: hsl(0, 0%, 50%); }
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.form-textarea { resize: vertical; min-height: 100px; }
+
+/* Search bar variant */
+.search-bar {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.search-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* ─── Badges / Chips ─────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* SkillStatus badges */
+.badge-learning   { background: rgba(51, 204, 255, 0.15); color: var(--secondary); border: 1px solid rgba(51,204,255,0.3); }
+.badge-proficient { background: rgba(34, 197, 94, 0.15);  color: var(--success);   border: 1px solid rgba(34,197,94,0.3); }
+.badge-expert     { background: rgba(204, 51, 255, 0.15); color: var(--accent);    border: 1px solid rgba(204,51,255,0.3); }
+
+/* BookingStatus badges */
+.badge-pending    { background: rgba(255, 122, 77, 0.15);  color: var(--coral);   border: 1px solid rgba(255,122,77,0.3); }
+.badge-confirmed  { background: rgba(34, 197, 94, 0.15);   color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+.badge-cancelled  { background: rgba(239, 68, 68, 0.15);   color: var(--danger);  border: 1px solid rgba(239,68,68,0.3); }
+.badge-completed  { background: rgba(114, 107, 255, 0.15); color: var(--primary); border: 1px solid rgba(114,107,255,0.3); }
+
+/* ─── Skill Card (grid item) ─────────────────────────────── */
+.skill-card {
+  display: block;
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.skill-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--primary-glow) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.skill-card:hover { border-color: rgba(114,107,255,0.5); transform: translateY(-3px); box-shadow: var(--shadow-card), var(--shadow-glow); }
+.skill-card:hover::before { opacity: 1; }
+.skill-card:hover .skill-card__name { color: #9A95FF; }
+
+.skill-card__name    { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem; transition: color var(--transition); }
+.skill-card__cat     { font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.75rem; }
+.skill-card__meta    { font-size: 0.8125rem; color: var(--primary); font-weight: 500; }
+
+/* ─── Skills Grid ────────────────────────────────────────── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+/* ─── Tabs ───────────────────────────────────────────────── */
+.tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.tab {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: -1px;
+  font-family: inherit;
+}
+.tab:hover { color: var(--foreground); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ─── Avatar ─────────────────────────────────────────────── */
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+.avatar-sm { width: 40px; height: 40px; }
+.avatar-lg { width: 120px; height: 120px; }
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.5rem;
+  border-radius: 50%;
+}
+
+/* ─── Loading Spinner ────────────────────────────────────── */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1rem;
+  color: var(--muted);
+}
+
+/* ─── Error / Empty states ───────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid;
+  font-size: 0.9375rem;
+  margin-bottom: 1rem;
+}
+.alert-error   { background: rgba(239,68,68,0.1);  border-color: rgba(239,68,68,0.3);  color: #FCA5A5; }
+.alert-success { background: rgba(34,197,94,0.1);  border-color: rgba(34,197,94,0.3);  color: #86EFAC; }
+.alert-info    { background: rgba(114,107,255,0.1); border-color: rgba(114,107,255,0.3); color: #A5B4FC; }
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+.empty-state h3 { color: var(--foreground); margin-bottom: 0.5rem; }
+
+/* ─── Dividers ───────────────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+/* ─── Section headings ───────────────────────────────────── */
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.section-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ─── Hero gradient text ─────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Page transitions ───────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.3s ease forwards; }
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .skills-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .search-bar  { flex-direction: column; }
+  .search-input, .search-bar .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .skills-grid { grid-template-columns: 1fr; }
+  .card { padding: 1rem; }
+}
+```
+
+---
+
+#### Step 2 — Navbar styles
+
+**File:** `src/app/shared/components/navbar/navbar.component.css`
+
+```css
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  background: rgba(20, 22, 26, 0.85);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.navbar__logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--foreground);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+.navbar__logo span { color: var(--primary); }
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.navbar__link {
+  padding: 0.4rem 0.875rem;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.navbar__link:hover { color: var(--foreground); background: var(--surface); }
+.navbar__link.active { color: var(--primary); background: var(--primary-glow); }
+```
+
+Update `navbar.component.html` to use these classes:
+```html
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a routerLink="/" class="navbar__logo">Bench<span>Pulse</span></a>
+    <ul class="navbar__links">
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="navbar__link">Skills</a></li>
+      <li><a routerLink="/bookings" routerLinkActive="active" class="navbar__link">Bookings</a></li>
+      <li><a routerLink="/profile" routerLinkActive="active" class="navbar__link">Profile</a></li>
+    </ul>
+  </div>
+</nav>
+```
+
+---
+
+#### Step 3 — Skill Search page styles
+
+Apply `.page`, `.container`, `.section-title`, `.section-sub`, `.search-bar`, `.skills-grid`, and `.skill-card` classes from `styles.css`. Update the template:
+
+```html
+<div class="page fade-up">
+  <div class="container">
+    <h1 class="section-title">Find a <span class="gradient-text">Skill Peer</span></h1>
+    <p class="section-sub">Discover colleagues who are learning or can teach you something new.</p>
+
+    <div class="search-bar">
+      <input class="search-input" [(ngModel)]="query"
+             placeholder="Search skills… e.g. Angular, Playwright"
+             (keyup.enter)="search()" />
+      <button class="btn btn-primary" (click)="search()">Search</button>
+      @if (query()) {
+        <button class="btn btn-ghost btn-sm" (click)="query.set(''); loadAll()">Clear</button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div><span>Loading skills…</span></div>
+    } @else if (skills().length === 0) {
+      <div class="empty-state">
+        <h3>No skills found</h3>
+        <p>Try a different search term or add a new skill.</p>
+      </div>
+    } @else {
+      <div class="skills-grid">
+        @for (skill of skills(); track skill.id) {
+          <a [routerLink]="['/skills', skill.id]" class="skill-card">
+            <div class="skill-card__name">{{ skill.name }}</div>
+            <div class="skill-card__cat">{{ skill.category }}</div>
+            <div class="skill-card__meta">{{ skill.learnerCount }} learners</div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>
+```
+
+---
+
+#### Step 4 — Status badge helper (shared pipe or inline)
+
+Add a helper function or Angular pipe that maps enums to badge CSS classes:
+
+```typescript
+// In any component or a shared util
+skillStatusClass(status: SkillStatus): string {
+  return ['badge-learning', 'badge-proficient', 'badge-expert'][status] ?? 'badge-learning';
+}
+bookingStatusClass(status: BookingStatus): string {
+  return ['badge-pending', 'badge-confirmed', 'badge-cancelled', 'badge-completed'][status] ?? 'badge-pending';
+}
+```
+
+Usage in template:
+```html
+<span class="badge" [class]="skillStatusClass(userSkill.status)">{{ SkillStatus[userSkill.status] }}</span>
+```
+
+---
+
+#### Step 5 — Micro-interaction checklist
+
+| Element | Interaction |
+|---|---|
+| Skill card | `translateY(-3px)` + glow shadow on hover |
+| Primary button | `translateY(-1px)` + glow on hover; reset on active |
+| Form inputs | Violet focus ring (`box-shadow: 0 0 0 3px var(--primary-glow)`) |
+| Nav links | Background fill + color change on hover/active |
+| Tabs | Animated bottom border on active |
+| Avatar | Gradient border via `border: 2px solid var(--primary)` |
+| Page load | `.fade-up` animation (opacity + translateY) |
+| Spinner | Rotating arc with primary color |
+
+---
+
+**Done when:**
+- `ng serve` renders the app with the Symphony dark theme and Poppins font.
+- All five pages (Skill Search, Skill Detail, Profile View, Profile Edit, Bookings) use the shared token system.
+- Skill status and booking status badges display correct colors.
+- Cards, buttons, and inputs have smooth hover and focus transitions.
+- Layout is responsive and usable at 1280px, 768px, and 375px.
 
 ---
 

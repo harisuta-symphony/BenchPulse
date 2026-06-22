@@ -1,0 +1,18 @@
+<div class="skill-search">
+  <h1>Find a Skill Peer</h1>
+  <input [(ngModel)]="query" placeholder="Search skills... e.g. Angular, Playwright"
+         (keyup.enter)="search()" />
+  <button (click)="search()">Search</button>
+
+  @if (loading()) { <p>Loading...</p> }
+
+  <div class="skills-grid">
+    @for (skill of skills(); track skill.id) {
+      <a [routerLink]="['/skills', skill.id]" class="skill-card">
+        <h3>{{ skill.name }}</h3>
+        <p>{{ skill.category }}</p>
+        <span>{{ skill.learnerCount }} learners</span>
+      </a>
+    }
+  </div>
+</div>
