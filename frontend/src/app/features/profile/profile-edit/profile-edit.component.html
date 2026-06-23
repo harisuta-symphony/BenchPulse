@@ -1,0 +1,113 @@
+<div class="page fade-up">
+  <div class="container" style="max-width: 640px">
+
+    <h1 class="section-title" style="margin-bottom: 2rem">Edit Profile</h1>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div><span>Loading…</span></div>
+    } @else if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    } @else {
+
+      <!-- Profile fields -->
+      <div class="card" style="margin-bottom: 1.5rem">
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" formControlName="fullName" placeholder="Your full name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Department</label>
+            <input class="form-input" formControlName="department" placeholder="e.g. Engineering" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bio</label>
+            <textarea class="form-textarea" formControlName="bio" rows="3" placeholder="A few words about yourself…"></textarea>
+          </div>
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem">
+            <a routerLink="/profile" class="btn btn-secondary">Cancel</a>
+            <button class="btn btn-primary" type="submit" [disabled]="saving()">
+              @if (saving()) { Saving… } @else { Save Changes }
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Skills section -->
+      <h2 class="section-title" style="font-size: 1.125rem; margin-bottom: 1rem">My Skills</h2>
+
+      <!-- Current skills list -->
+      @if (userSkills().length === 0) {
+        <p style="color: var(--muted); margin-bottom: 1rem">No skills added yet. Search below to add some.</p>
+      } @else {
+        <div class="card" style="margin-bottom: 1.5rem; padding: 0">
+          @for (us of userSkills(); track us.id) {
+            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--border)">
+              <span style="flex: 1; font-weight: 500">{{ us.skillName }}</span>
+
+              <!-- Status selector -->
+              <div style="display: flex; gap: 0.25rem">
+                @for (s of [['0','Learning'],['1','Proficient'],['2','Expert']]; track s[0]) {
+                  <button
+                    type="button"
+                    class="btn btn-sm"
+                    [ngClass]="toNumber(us.status) === toNumber(s[0]) ? statusClass(s[0]) + ' badge' : 'btn-secondary'"
+                    (click)="setStatus(us, s[0])">
+                    {{ s[1] }}
+                  </button>
+                }
+              </div>
+
+              <!-- Teachable toggle -->
+              <button
+                type="button"
+                class="btn btn-sm"
+                [ngClass]="us.isTeachable ? 'btn-primary' : 'btn-secondary'"
+                (click)="toggleTeachable(us)"
+                title="Toggle willingness to teach">
+                {{ us.isTeachable ? 'Can Teach ✓' : 'Can Teach' }}
+              </button>
+
+              <!-- Remove -->
+              <button type="button" class="btn btn-sm btn-danger" (click)="removeSkill(us)" title="Remove skill">✕</button>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Add skill search -->
+      <div class="card">
+        <p class="form-label" style="margin-bottom: 0.75rem">Add a Skill</p>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem">
+          <input
+            class="form-input"
+            style="flex: 1"
+            placeholder="Search skills… e.g. Angular, Docker"
+            [value]="skillSearchQuery()"
+            (input)="skillSearchQuery.set($any($event.target).value)"
+            (keyup.enter)="searchSkills()" />
+          <button type="button" class="btn btn-secondary" (click)="searchSkills()" [disabled]="searchingSkills()">
+            @if (searchingSkills()) { … } @else { Search }
+          </button>
+        </div>
+
+        @if (skillSearchResults().length > 0) {
+          <div style="display: flex; flex-direction: column; gap: 0.5rem">
+            @for (skill of skillSearchResults(); track skill.id) {
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 0.875rem; border-radius: 6px; background: var(--surface-2)">
+                <div>
+                  <span style="font-weight: 500">{{ skill.name }}</span>
+                  @if (skill.category) {
+                    <span style="color: var(--muted); font-size: 0.8125rem; margin-left: 0.5rem">· {{ skill.category }}</span>
+                  }
+                </div>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addSkill(skill)">+ Add</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    }
+  </div>
+</div>

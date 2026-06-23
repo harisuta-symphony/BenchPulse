@@ -37,4 +37,22 @@ export class SkillDetailComponent implements OnInit {
     teachable() {
         return this.userSkills();
     }
+
+    statusLabel(status: string | number): string {
+        switch (Number(status)) {
+            case 0: return 'Learning';
+            case 1: return 'Proficient';
+            case 2: return 'Expert';
+            default: return 'Learning';
+        }
+    }
+
+    skillStatusClass(status: string | number): string {
+        switch (Number(status)) {
+            case 0: return 'badge-learning';
+            case 1: return 'badge-proficient';
+            case 2: return 'badge-expert';
+            default: return 'badge-learning';
+        }
+    }
 }
