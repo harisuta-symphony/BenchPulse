@@ -1,0 +1,73 @@
+<div class="page fade-up">
+  <div class="container">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem">
+      <h1 class="section-title" style="margin-bottom: 0">My Bookings</h1>
+      <a routerLink="/bookings/new" class="btn btn-primary">+ New Booking</a>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div><span>Loading bookings…</span></div>
+    } @else if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    } @else {
+
+      <!-- Tabs -->
+      <div class="tabs" style="margin-bottom: 1.5rem">
+        <button class="tab" [class.active]="activeTab() === 'sent'" (click)="activeTab.set('sent')">
+          My Requests
+          @if (sentBookings().length > 0) {
+            <span style="margin-left: 0.375rem; font-size: 0.75rem; opacity: 0.7">({{ sentBookings().length }})</span>
+          }
+        </button>
+        <button class="tab" [class.active]="activeTab() === 'incoming'" (click)="activeTab.set('incoming')">
+          Incoming
+          @if (incomingBookings().length > 0) {
+            <span style="margin-left: 0.375rem; font-size: 0.75rem; opacity: 0.7">({{ incomingBookings().length }})</span>
+          }
+        </button>
+      </div>
+
+      <!-- Booking cards -->
+      @if (displayedBookings().length === 0) {
+        <div class="empty-state">
+          <h3>No bookings yet</h3>
+          <p>
+            @if (activeTab() === 'sent') {
+              Browse skills and book a session with a peer.
+            } @else {
+              You have no incoming session requests.
+            }
+          </p>
+          @if (activeTab() === 'sent') {
+            <a routerLink="/" class="btn btn-primary" style="margin-top: 1rem">Browse Skills</a>
+          }
+        </div>
+      } @else {
+        @for (b of displayedBookings(); track b.id) {
+          <div class="card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem">
+            <div>
+              <h4 style="margin-bottom: 0.25rem">{{ b.skillName }}</h4>
+              <p style="color: var(--muted); font-size: 0.875rem">
+                with {{ activeTab() === 'sent' ? b.providerName : b.requesterName }}
+                · {{ b.scheduledAt | date:'MMM d, y, h:mm a' }}
+                · {{ b.durationMinutes }} min
+              </p>
+              @if (b.meetingLink) {
+                <a [href]="b.meetingLink" target="_blank" style="font-size: 0.875rem; color: var(--accent)">Join meeting ↗</a>
+              }
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0">
+              <span class="badge" [ngClass]="bookingStatusClass(b.status)">{{ bookingStatusLabel(b.status) }}</span>
+              @if (activeTab() === 'incoming' && isPending(b.status)) {
+                <button class="btn btn-primary btn-sm" (click)="confirm(b.id)">Confirm</button>
+                <button class="btn btn-danger btn-sm" (click)="cancel(b.id)">Cancel</button>
+              }
+            </div>
+          </div>
+        }
+      }
+
+    }
+  </div>
+</div>

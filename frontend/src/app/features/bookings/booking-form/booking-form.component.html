@@ -1,0 +1,91 @@
+<div class="page fade-up">
+  <div class="container" style="max-width: 560px">
+
+    <h1 class="section-title" style="margin-bottom: 2rem">Book a Session</h1>
+
+    @if (loading()) {
+      <div class="loading-overlay"><div class="spinner"></div><span>Loading…</span></div>
+    } @else {
+
+      @if (error()) {
+        <div class="alert alert-error" style="margin-bottom: 1rem">{{ error() }}</div>
+      }
+
+      <div class="card">
+
+        <!-- Read-only provider + skill info -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap">
+          <div style="flex: 1; min-width: 140px">
+            <p class="form-label" style="margin-bottom: 0.25rem">Provider</p>
+            @if (provider()) {
+              <div style="display: flex; align-items: center; gap: 0.625rem">
+                <div class="avatar avatar-sm avatar-placeholder">{{ provider()!.fullName[0] }}</div>
+                <span style="font-weight: 500">{{ provider()!.fullName }}</span>
+              </div>
+            } @else {
+              <span style="color: var(--muted)">—</span>
+            }
+          </div>
+          <div style="flex: 1; min-width: 140px">
+            <p class="form-label" style="margin-bottom: 0.25rem">Skill</p>
+            @if (skill()) {
+              <span class="badge badge-proficient">{{ skill()!.name }}</span>
+            } @else {
+              <span style="color: var(--muted)">—</span>
+            }
+          </div>
+        </div>
+
+        <!-- Date & time -->
+        <div class="form-group">
+          <label class="form-label">Date &amp; Time</label>
+          <input
+            class="form-input"
+            type="datetime-local"
+            [value]="scheduledAt()"
+            (change)="scheduledAt.set($any($event.target).value)" />
+        </div>
+
+        <!-- Duration button-group -->
+        <div class="form-group">
+          <label class="form-label">Duration</label>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+            @for (d of durations; track d) {
+              <button
+                type="button"
+                class="btn"
+                [ngClass]="selectedDuration() === d ? 'btn-primary' : 'btn-secondary'"
+                (click)="selectedDuration.set(d)">
+                {{ d }} min
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Optional message -->
+        <div class="form-group">
+          <label class="form-label">Message <span style="color: var(--muted); font-weight: 400">(optional)</span></label>
+          <textarea
+            class="form-textarea"
+            rows="3"
+            placeholder="What do you want to learn or discuss?"
+            [value]="message()"
+            (input)="message.set($any($event.target).value)"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem">
+          <a routerLink="/bookings" class="btn btn-secondary">Cancel</a>
+          <button
+            type="button"
+            class="btn btn-primary btn-lg"
+            (click)="submit()"
+            [disabled]="submitting() || !scheduledAt()">
+            @if (submitting()) { Booking… } @else { Book Session }
+          </button>
+        </div>
+
+      </div>
+    }
+  </div>
+</div>

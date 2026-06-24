@@ -17,5 +17,13 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./features/profile/profile-view/profile-view.component').then(m => m.ProfileViewComponent)
   },
-{ path: '**', redirectTo: '' }
+  {
+    path: 'bookings/new',
+    loadComponent: () => import('./features/bookings/booking-form/booking-form.component').then(m => m.BookingFormComponent)
+  },
+  {
+    path: 'bookings',
+    loadComponent: () => import('./features/bookings/booking-list/booking-list.component').then(m => m.BookingListComponent)
+  },
+  { path: '**', redirectTo: '' }
 ];
