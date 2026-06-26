@@ -1,0 +1,45 @@
+- generic [ref=e2]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "BenchPulse" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "Skills" [ref=e9] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e10]:
+          - link "Bookings" [ref=e11] [cursor=pointer]:
+            - /url: /bookings
+        - listitem [ref=e12]:
+          - link "Profile" [ref=e13] [cursor=pointer]:
+            - /url: /profile
+  - generic [ref=e16]:
+    - heading "Book a Session" [level=1] [ref=e17]
+    - generic [ref=e19]:
+      - generic [ref=e20]: Not signed in.
+      - button "×" [ref=e21] [cursor=pointer]
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Provider
+          - text: —
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: Skill
+          - text: —
+      - generic [ref=e28]:
+        - generic [ref=e29]: Date & Time
+        - textbox [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]: Duration
+        - generic [ref=e33]:
+          - button "15 min" [ref=e34] [cursor=pointer]
+          - button "30 min" [ref=e35] [cursor=pointer]
+          - button "45 min" [ref=e36] [cursor=pointer]
+          - button "60 min" [ref=e37] [cursor=pointer]
+      - generic [ref=e38]:
+        - generic [ref=e39]: Message (optional)
+        - textbox "What do you want to learn or discuss?" [ref=e40]
+      - generic [ref=e41]:
+        - link "Cancel" [ref=e42] [cursor=pointer]:
+          - /url: /bookings
+        - button "Book Session" [disabled] [ref=e43]

@@ -1,0 +1,27 @@
+- generic [ref=e2]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "BenchPulse" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "Skills" [ref=e9] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e10]:
+          - link "Bookings" [ref=e11] [cursor=pointer]:
+            - /url: /bookings
+        - listitem [ref=e12]:
+          - link "Profile" [ref=e13] [cursor=pointer]:
+            - /url: /profile
+  - generic [ref=e16]:
+    - heading "Find a Skill Peer" [level=1] [ref=e17]
+    - paragraph [ref=e18]: Discover colleagues who are learning or can teach you something new.
+    - generic [ref=e19]:
+      - textbox "Search skills… e.g. Angular, Playwright" [ref=e20]
+      - button "Search" [ref=e21] [cursor=pointer]
+    - generic [ref=e23]:
+      - generic [ref=e24]: Could not load skills.
+      - button "×" [ref=e25] [cursor=pointer]
+    - generic [ref=e26]:
+      - heading "No skills found" [level=3] [ref=e27]
+      - paragraph [ref=e28]: Try a different search term.

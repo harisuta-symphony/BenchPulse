@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "BenchPulse" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "Skills" [ref=e9] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e10]:
+          - link "Bookings" [ref=e11] [cursor=pointer]:
+            - /url: /bookings
+        - listitem [ref=e12]:
+          - link "Profile" [ref=e13] [cursor=pointer]:
+            - /url: /profile
+  - generic [ref=e18]:
+    - generic [ref=e19]: Not signed in.
+    - button "×" [ref=e20] [cursor=pointer]

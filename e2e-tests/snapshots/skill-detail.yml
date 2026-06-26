@@ -1,0 +1,24 @@
+- generic [ref=e2]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "BenchPulse" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "Skills" [ref=e9] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e10]:
+          - link "Bookings" [ref=e11] [cursor=pointer]:
+            - /url: /bookings
+        - listitem [ref=e12]:
+          - link "Profile" [ref=e13] [cursor=pointer]:
+            - /url: /profile
+  - generic [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]: Could not load peer list.
+      - button "×" [ref=e18] [cursor=pointer]
+    - generic [ref=e19]:
+      - heading [level=1]
+      - paragraph
+      - paragraph
+    - heading "People who can teach this" [level=2] [ref=e20]
