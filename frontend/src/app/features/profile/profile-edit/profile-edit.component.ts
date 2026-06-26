@@ -2,18 +2,21 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ErrorAlertComponent } from '../../../shared/components/error-alert/error-alert.component';
+import { skillStatusClass, skillStatusLabel } from '../../../shared/utils/badge.utils';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
 import { SkillService } from '../../../core/services/skill.service';
 import { UserSkillService } from '../../../core/services/user-skill.service';
 import { User } from '../../../core/models/user.model';
 import { Skill } from '../../../core/models/skill.model';
-import { UserSkill } from '../../../core/models/user-skill.model';
+import { UserSkill, UpdateUserSkill } from '../../../core/models/user-skill.model';
 
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgClass],
+  imports: [ReactiveFormsModule, RouterLink, NgClass, LoadingSpinnerComponent, ErrorAlertComponent],
   templateUrl: './profile-edit.component.html'
 })
 export class ProfileEditComponent implements OnInit {
@@ -96,7 +99,7 @@ export class ProfileEditComponent implements OnInit {
   addSkill(skill: Skill) {
     const id = this.userId();
     if (!id) return;
-    this.userSkillService.create({ userId: id, skillId: skill.id, status: '0', isTeachable: false }).subscribe({
+    this.userSkillService.create({ userId: id, skillId: skill.id, status: 0, isTeachable: false }).subscribe({
       next: (us: UserSkill) => {
         this.userSkills.update(list => [...list, us]);
         this.skillSearchResults.update(results => results.filter(s => s.id !== skill.id));
@@ -111,15 +114,17 @@ export class ProfileEditComponent implements OnInit {
   }
 
   toggleTeachable(userSkill: UserSkill) {
-    this.userSkillService.update(userSkill.id, { isTeachable: !userSkill.isTeachable }).subscribe({
+    const dto: UpdateUserSkill = { isTeachable: !userSkill.isTeachable };
+    this.userSkillService.update(userSkill.id, dto).subscribe({
       next: (updated: UserSkill) => {
         this.userSkills.update(list => list.map(us => us.id === updated.id ? updated : us));
       }
     });
   }
 
-  setStatus(userSkill: UserSkill, status: string) {
-    this.userSkillService.update(userSkill.id, { status }).subscribe({
+  setStatus(userSkill: UserSkill, status: number) {
+    const dto: UpdateUserSkill = { status };
+    this.userSkillService.update(userSkill.id, dto).subscribe({
       next: (updated: UserSkill) => {
         this.userSkills.update(list => list.map(us => us.id === updated.id ? updated : us));
       }
@@ -127,22 +132,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   toNumber = Number;
-
-  statusLabel(status: string | number): string {
-    switch (Number(status)) {
-      case 0: return 'Learning';
-      case 1: return 'Proficient';
-      case 2: return 'Expert';
-      default: return 'Learning';
-    }
-  }
-
-  statusClass(status: string | number): string {
-    switch (Number(status)) {
-      case 0: return 'badge-learning';
-      case 1: return 'badge-proficient';
-      case 2: return 'badge-expert';
-      default: return 'badge-learning';
-    }
-  }
+  readonly skillStatusClass = skillStatusClass;
+  readonly skillStatusLabel = skillStatusLabel;
 }

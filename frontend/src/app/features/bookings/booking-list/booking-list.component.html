@@ -7,9 +7,9 @@
     </div>
 
     @if (loading()) {
-      <div class="loading-overlay"><div class="spinner"></div><span>Loading bookings…</span></div>
+      <app-loading-spinner message="Loading bookings…" />
     } @else if (error()) {
-      <div class="alert alert-error">{{ error() }}</div>
+      <app-error-alert [message]="error()!" (dismissed)="error.set(null)" />
     } @else {
 
       <!-- Tabs -->

@@ -31,6 +31,8 @@ public class UserService : IUserService
     public async Task<UserDto> CreateAsync(CreateUserDto dto)
     {
         var entity = _mapper.Map<UserEntity>(dto);
+        if (dto.Id.HasValue)
+            entity.Id = dto.Id.Value;
         var created = await _repo.CreateAsync(entity);
         return _mapper.Map<UserDto>(created);
     }

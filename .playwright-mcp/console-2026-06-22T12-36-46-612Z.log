@@ -1,0 +1,11 @@
+[     370ms] [ERROR] RuntimeError: NG0908: In this configuration Angular requires Zone.js
+    at new _NgZone (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:5822:13)
+    at Object.ngZoneFactory [as useFactory] (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:28363:14)
+    at Object.factory (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:4825:32)
+    at http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:4746:35
+    at runInInjectorProfilerContext (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:3859:5)
+    at R3Injector.hydrate (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:4744:11)
+    at R3Injector.get (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:4633:23)
+    at bootstrap (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:28603:30)
+    at internalCreateApplication (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-KOD7QZ33.js?v=b11d1112:29154:12)
+    at bootstrapApplication (http://localhost:4200/@fs/Users/harisuta/Desktop/BenchPulse/BenchPulse/frontend/.angular/cache/22.0.3/benchpulse-ui/vite/deps/chunk-35HH7ZX5.js?v=b11d1112:5471:10) @ http://localhost:4200/main.js:111

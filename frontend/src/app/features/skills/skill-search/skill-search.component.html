@@ -1,18 +1,39 @@
-<div class="skill-search">
-  <h1>Find a Skill Peer</h1>
-  <input [(ngModel)]="query" placeholder="Search skills... e.g. Angular, Playwright"
-         (keyup.enter)="search()" />
-  <button (click)="search()">Search</button>
+<div class="page fade-up">
+  <div class="container">
+    <h1 class="section-title">Find a <span class="gradient-text">Skill Peer</span></h1>
+    <p class="section-sub">Discover colleagues who are learning or can teach you something new.</p>
 
-  @if (loading()) { <p>Loading...</p> }
+    <div class="search-bar">
+      <input class="search-input" [(ngModel)]="query"
+             placeholder="Search skills… e.g. Angular, Playwright"
+             (keyup.enter)="search()" />
+      <button class="btn btn-primary" (click)="search()">Search</button>
+      @if (query()) {
+        <button class="btn btn-ghost btn-sm" (click)="query.set(''); loadAll()">Clear</button>
+      }
+    </div>
 
-  <div class="skills-grid">
-    @for (skill of skills(); track skill.id) {
-      <a [routerLink]="['/skills', skill.id]" class="skill-card">
-        <h3>{{ skill.name }}</h3>
-        <p>{{ skill.category }}</p>
-        <span>{{ skill.learnerCount }} learners</span>
-      </a>
+    @if (error()) {
+      <app-error-alert [message]="error()!" (dismissed)="error.set(null)" />
+    }
+
+    @if (loading()) {
+      <app-loading-spinner message="Loading skills…" />
+    } @else if (skills().length === 0) {
+      <div class="empty-state">
+        <h3>No skills found</h3>
+        <p>Try a different search term.</p>
+      </div>
+    } @else {
+      <div class="skills-grid">
+        @for (skill of skills(); track skill.id) {
+          <a [routerLink]="['/skills', skill.id]" class="skill-card">
+            <div class="skill-card__name">{{ skill.name }}</div>
+            <div class="skill-card__cat">{{ skill.category }}</div>
+            <div class="skill-card__meta">{{ skill.learnerCount }} learners</div>
+          </a>
+        }
+      </div>
     }
   </div>
 </div>

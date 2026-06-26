@@ -4,9 +4,9 @@
     <h1 class="section-title" style="margin-bottom: 2rem">Edit Profile</h1>
 
     @if (loading()) {
-      <div class="loading-overlay"><div class="spinner"></div><span>Loading…</span></div>
+      <app-loading-spinner message="Loading…" />
     } @else if (error()) {
-      <div class="alert alert-error">{{ error() }}</div>
+      <app-error-alert [message]="error()!" (dismissed)="error.set(null)" />
     } @else {
 
       <!-- Profile fields -->
@@ -47,12 +47,12 @@
 
               <!-- Status selector -->
               <div style="display: flex; gap: 0.25rem">
-                @for (s of [['0','Learning'],['1','Proficient'],['2','Expert']]; track s[0]) {
+                @for (s of [[0,'Learning'],[1,'Proficient'],[2,'Expert']]; track s[0]) {
                   <button
                     type="button"
                     class="btn btn-sm"
-                    [ngClass]="toNumber(us.status) === toNumber(s[0]) ? statusClass(s[0]) + ' badge' : 'btn-secondary'"
-                    (click)="setStatus(us, s[0])">
+                    [ngClass]="us.status === s[0] ? skillStatusClass(s[0]) + ' badge' : 'btn-secondary'"
+                    (click)="setStatus(us, +s[0])">
                     {{ s[1] }}
                   </button>
                 }

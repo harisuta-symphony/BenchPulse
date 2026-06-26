@@ -22,3 +22,10 @@ public class CreateUserSkillDto
     public bool IsTeachable { get; set; }
     public string? Notes { get; set; }
 }
+
+public class UpdateUserSkillDto
+{
+    public SkillStatus? Status { get; set; }
+    public bool? IsTeachable { get; set; }
+    public string? Notes { get; set; }
+}

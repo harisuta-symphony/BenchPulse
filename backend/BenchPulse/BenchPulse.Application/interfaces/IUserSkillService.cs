@@ -8,6 +8,6 @@ public interface IUserSkillService
     Task<IEnumerable<UserSkillDto>> GetBySkillIdAsync(Guid skillId);
     Task<UserSkillDto?> GetByIdAsync(Guid id);
     Task<UserSkillDto> CreateAsync(CreateUserSkillDto dto);
-    Task<UserSkillDto> UpdateAsync(Guid id, CreateUserSkillDto dto);
+    Task<UserSkillDto> UpdateAsync(Guid id, UpdateUserSkillDto dto);
     Task DeleteAsync(Guid id);
 }

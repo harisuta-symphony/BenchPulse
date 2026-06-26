@@ -9,6 +9,7 @@ export interface User {
 }
 
 export interface CreateUser {
+  id?: string;
   fullName: string;
   email: string;
   bio?: string;

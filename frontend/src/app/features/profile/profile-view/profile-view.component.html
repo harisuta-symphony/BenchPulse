@@ -2,9 +2,9 @@
   <div class="container" style="max-width: 800px">
 
     @if (loading()) {
-      <div class="loading-overlay"><div class="spinner"></div><span>Loading profile…</span></div>
+      <app-loading-spinner message="Loading profile…" />
     } @else if (error()) {
-      <div class="alert alert-error">{{ error() }}</div>
+      <app-error-alert [message]="error()!" (dismissed)="error.set(null)" />
     } @else {
 
       <!-- Profile header card -->

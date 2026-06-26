@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ErrorAlertComponent } from '../../../shared/components/error-alert/error-alert.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
 import { UserSkillService } from '../../../core/services/user-skill.service';
@@ -10,7 +12,7 @@ import { UserSkill } from '../../../core/models/user-skill.model';
 @Component({
   selector: 'app-profile-view',
   standalone: true,
-  imports: [RouterLink, NgClass],
+  imports: [RouterLink, NgClass, LoadingSpinnerComponent, ErrorAlertComponent],
   templateUrl: './profile-view.component.html'
 })
 export class ProfileViewComponent implements OnInit {

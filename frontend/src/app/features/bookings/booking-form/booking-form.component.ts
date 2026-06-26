@@ -2,6 +2,8 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ErrorAlertComponent } from '../../../shared/components/error-alert/error-alert.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { BookingService } from '../../../core/services/booking.service';
 import { UserService } from '../../../core/services/user.service';
@@ -12,7 +14,7 @@ import { Skill } from '../../../core/models/skill.model';
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [FormsModule, RouterLink, NgClass],
+  imports: [FormsModule, RouterLink, NgClass, LoadingSpinnerComponent, ErrorAlertComponent],
   templateUrl: './booking-form.component.html'
 })
 export class BookingFormComponent implements OnInit {

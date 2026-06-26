@@ -1,6 +1,9 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ErrorAlertComponent } from '../../../shared/components/error-alert/error-alert.component';
+import { bookingStatusClass, bookingStatusLabel } from '../../../shared/utils/badge.utils';
 import { AuthService } from '../../../core/services/auth.service';
 import { BookingService } from '../../../core/services/booking.service';
 import { Booking } from '../../../core/models/booking.model';
@@ -8,7 +11,7 @@ import { Booking } from '../../../core/models/booking.model';
 @Component({
   selector: 'app-booking-list',
   standalone: true,
-  imports: [DatePipe, NgClass, RouterLink],
+  imports: [DatePipe, NgClass, RouterLink, LoadingSpinnerComponent, ErrorAlertComponent],
   templateUrl: './booking-list.component.html'
 })
 export class BookingListComponent implements OnInit {
@@ -71,23 +74,6 @@ export class BookingListComponent implements OnInit {
     return Number(status) === 0;
   }
 
-  bookingStatusLabel(status: string): string {
-    switch (Number(status)) {
-      case 0: return 'Pending';
-      case 1: return 'Confirmed';
-      case 2: return 'Cancelled';
-      case 3: return 'Completed';
-      default: return 'Unknown';
-    }
-  }
-
-  bookingStatusClass(status: string): string {
-    switch (Number(status)) {
-      case 0: return 'badge-pending';
-      case 1: return 'badge-confirmed';
-      case 2: return 'badge-cancelled';
-      case 3: return 'badge-completed';
-      default: return '';
-    }
-  }
+  readonly bookingStatusClass = bookingStatusClass;
+  readonly bookingStatusLabel = bookingStatusLabel;
 }

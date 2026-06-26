@@ -4,11 +4,14 @@ import { SkillService } from '../../../core/services/skill.service';
 import { UserSkillService } from '../../../core/services/user-skill.service';
 import { Skill } from '../../../core/models/skill.model';
 import { UserSkill } from '../../../core/models/user-skill.model';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { ErrorAlertComponent } from '../../../shared/components/error-alert/error-alert.component';
+import { skillStatusClass, skillStatusLabel } from '../../../shared/utils/badge.utils';
 
 @Component({
     selector: 'app-skill-detail',
     standalone: true,
-    imports: [RouterLink],
+    imports: [RouterLink, LoadingSpinnerComponent, ErrorAlertComponent],
     templateUrl: './skill-detail.component.html'
 })
 export class SkillDetailComponent implements OnInit {
@@ -19,6 +22,7 @@ export class SkillDetailComponent implements OnInit {
     skill = signal<Skill | null>(null);
     userSkills = signal<UserSkill[]>([]);
     loading = signal(false);
+    error = signal<string | null>(null);
 
     ngOnInit() { this.load(); }
 
@@ -27,10 +31,11 @@ export class SkillDetailComponent implements OnInit {
         this.loading.set(true);
         this.skillService.getById(id).subscribe({
             next: s => { this.skill.set(s); this.loading.set(false); },
-            error: () => this.loading.set(false)
+            error: () => { this.error.set('Could not load skill details.'); this.loading.set(false); }
         });
         this.userSkillService.getBySkillId(id).subscribe({
-            next: us => this.userSkills.set(us.filter(u => u.isTeachable))
+            next: us => this.userSkills.set(us.filter(u => u.isTeachable)),
+            error: () => this.error.set('Could not load peer list.')
         });
     }
 
@@ -38,21 +43,6 @@ export class SkillDetailComponent implements OnInit {
         return this.userSkills();
     }
 
-    statusLabel(status: string | number): string {
-        switch (Number(status)) {
-            case 0: return 'Learning';
-            case 1: return 'Proficient';
-            case 2: return 'Expert';
-            default: return 'Learning';
-        }
-    }
-
-    skillStatusClass(status: string | number): string {
-        switch (Number(status)) {
-            case 0: return 'badge-learning';
-            case 1: return 'badge-proficient';
-            case 2: return 'badge-expert';
-            default: return 'badge-learning';
-        }
-    }
+    readonly skillStatusClass = skillStatusClass;
+    readonly skillStatusLabel = skillStatusLabel;
 }

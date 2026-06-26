@@ -7,7 +7,7 @@ namespace BenchPulse.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/user-skills")]
 public class UserSkillsController : ControllerBase
 {
     private readonly IUserSkillService _service;
@@ -36,7 +36,7 @@ public class UserSkillsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] CreateUserSkillDto dto) =>
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserSkillDto dto) =>
         Ok(await _service.UpdateAsync(id, dto));
 
     [HttpDelete("{id:guid}")]

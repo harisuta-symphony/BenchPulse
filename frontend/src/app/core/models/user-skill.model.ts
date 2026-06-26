@@ -4,7 +4,7 @@ export interface UserSkill {
     userFullName: string;
     skillId: string;
     skillName: string;
-    status: string;
+    status: number;
     isTeachable: boolean;
     notes?: string
 }
@@ -12,7 +12,13 @@ export interface UserSkill {
 export interface CreateUserSkill {
     userId: string;
     skillId: string;
-    status: string;
+    status: number;
     isTeachable: boolean;
     notes?: string
+}
+
+export interface UpdateUserSkill {
+    status?: number;
+    isTeachable?: boolean;
+    notes?: string;
 }

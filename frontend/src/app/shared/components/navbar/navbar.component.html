@@ -1,6 +1,10 @@
-<nav>
-  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Home</a>
-  <a routerLink="/skills" routerLinkActive="active">Skills</a>
-  <a routerLink="/bookings" routerLinkActive="active">Bookings</a>
-  <a routerLink="/profile" routerLinkActive="active">Profile</a>
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a routerLink="/" class="navbar__logo">Bench<span>Pulse</span></a>
+    <ul class="navbar__links">
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="navbar__link">Skills</a></li>
+      <li><a routerLink="/bookings" routerLinkActive="active" class="navbar__link">Bookings</a></li>
+      <li><a routerLink="/profile" routerLinkActive="active" class="navbar__link">Profile</a></li>
+    </ul>
+  </div>
 </nav>

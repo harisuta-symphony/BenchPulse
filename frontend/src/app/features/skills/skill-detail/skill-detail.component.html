@@ -1,3 +1,11 @@
+@if (loading()) {
+  <app-loading-spinner message="Loading skill…" />
+}
+
+@if (error()) {
+  <app-error-alert [message]="error()!" (dismissed)="error.set(null)" />
+}
+
 <!-- Skill hero header -->
 <div class="card" style="margin-bottom: 2rem">
   <h1 class="section-title">{{ skill()?.name }}</h1>
@@ -12,7 +20,7 @@
     <div class="card">
       <div class="avatar avatar-sm avatar-placeholder">{{ us.userFullName[0] }}</div>
       <h4 style="margin-top:0.75rem">{{ us.userFullName }}</h4>
-      <span class="badge" [class]="skillStatusClass(us.status)">{{ statusLabel(us.status) }}</span>
+      <span class="badge" [class]="skillStatusClass(us.status)">{{ skillStatusLabel(us.status) }}</span>
       <a [routerLink]="['/bookings/new']" [queryParams]="{providerId: us.userId, skillId: skill()?.id}"
          class="btn btn-primary btn-sm" style="margin-top:1rem; width:100%">
         Book Session

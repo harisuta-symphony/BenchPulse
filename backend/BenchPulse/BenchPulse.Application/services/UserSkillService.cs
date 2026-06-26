@@ -41,11 +41,13 @@ public class UserSkillService : IUserSkillService
         return _mapper.Map<UserSkillDto>(created);
     }
 
-    public async Task<UserSkillDto> UpdateAsync(Guid id, CreateUserSkillDto dto)
+    public async Task<UserSkillDto> UpdateAsync(Guid id, UpdateUserSkillDto dto)
     {
         var entity = await _repo.GetByIdAsync(id)
             ?? throw new KeyNotFoundException($"UserSkill {id} not found.");
-        _mapper.Map(dto, entity);
+        if (dto.Status.HasValue) entity.Status = dto.Status.Value;
+        if (dto.IsTeachable.HasValue) entity.IsTeachable = dto.IsTeachable.Value;
+        if (dto.Notes != null) entity.Notes = dto.Notes;
         var updated = await _repo.UpdateAsync(entity);
         return _mapper.Map<UserSkillDto>(updated);
     }

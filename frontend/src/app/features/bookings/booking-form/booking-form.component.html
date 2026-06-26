@@ -4,11 +4,11 @@
     <h1 class="section-title" style="margin-bottom: 2rem">Book a Session</h1>
 
     @if (loading()) {
-      <div class="loading-overlay"><div class="spinner"></div><span>Loading…</span></div>
+      <app-loading-spinner message="Loading…" />
     } @else {
 
       @if (error()) {
-        <div class="alert alert-error" style="margin-bottom: 1rem">{{ error() }}</div>
+        <app-error-alert [message]="error()!" (dismissed)="error.set(null)" style="margin-bottom: 1rem" />
       }
 
       <div class="card">
